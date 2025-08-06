@@ -1,0 +1,148 @@
+{
+  "repository": {
+    "owner": "Toni-Cancela",
+    "name": "ClavisAurea"
+  },
+  "project": {
+    "title": "Clavis Aurea - Project Management",
+    "description": "Gestión integral del proyecto Clavis Aurea (App de Tarot) con tracking de milestones, issues y progreso de desarrollo de la aplicación de lecturas de tarot."
+  },
+  "milestones": [
+    {
+      "title": "🏗️ HITO 1: Configuración del Proyecto e Infraestructura Base",
+      "description": "Configuración inicial del proyecto Flutter con estructura organizada, integración completa con Firebase (Authentication y Firestore), establecimiento de arquitectura de carpetas y sistema de navegación con gestión de estado.",
+      "due_date": null,
+      "issues": [
+        {
+          "title": "Configurar proyecto Flutter inicial",
+          "body": "## Descripción\nCrear nuevo proyecto Flutter con estructura de carpetas organizada y configurar dependencias básicas.\n\n## Tareas\n- [ ] Crear nuevo proyecto Flutter\n- [ ] Configurar dependencias básicas (firebase_core, firebase_auth, provider/riverpod, etc.)\n- [ ] Establecer arquitectura de carpetas (models, services, screens, widgets, utils)\n- [ ] Configurar análisis estático de código y linting\n\n## Criterios de Aceptación\n- Proyecto Flutter funcional con estructura organizada\n- Dependencias principales instaladas y configuradas\n- Estructura de carpetas clara y escalable",
+          "labels": ["setup", "flutter", "architecture"]
+        },
+        {
+          "title": "Configurar Firebase y servicios backend",
+          "body": "## Descripción\nConfigurar proyecto Firebase con todos los servicios necesarios para la aplicación.\n\n## Tareas\n- [ ] Crear proyecto Firebase\n- [ ] Habilitar Firebase Authentication\n- [ ] Configurar Firestore Database\n- [ ] Configurar proveedores de autenticación (Email/Password, Google, Apple)\n- [ ] Establecer reglas de seguridad básicas de Firestore\n- [ ] Integrar Firebase SDK en Flutter\n\n## Criterios de Aceptación\n- Firebase configurado y funcional\n- Authentication habilitado con múltiples proveedores\n- Firestore configurado con reglas de seguridad",
+          "labels": ["firebase", "backend", "authentication"]
+        },
+        {
+          "title": "Implementar sistema de navegación y estado",
+          "body": "## Descripción\nImplementar sistema de navegación robusto y gestión de estado para toda la aplicación.\n\n## Tareas\n- [ ] Configurar enrutamiento con named routes\n- [ ] Implementar gestión de estado (Provider/Riverpod/Bloc)\n- [ ] Crear estructura de widgets base\n- [ ] Implementar theme personalizado de la app\n- [ ] Configurar navegación entre pantallas principales\n\n## Criterios de Aceptación\n- Sistema de navegación funcional\n- Gestión de estado implementada\n- Theme consistente en toda la app",
+          "labels": ["navigation", "state-management", "ui"]
+        }
+      ]
+    },
+    {
+      "title": "🔐 HITO 2: Sistema de Autenticación",
+      "description": "Implementación completa del sistema de autenticación con pantallas de login/registro, integración con Firebase Auth, autenticación social (Google y Apple) y manejo de estados de sesión.",
+      "due_date": null,
+      "issues": [
+        {
+          "title": "Implementar pantallas de autenticación",
+          "body": "## Descripción\nCrear todas las pantallas necesarias para el flujo de autenticación de usuarios.\n\n## Tareas\n- [ ] Crear pantalla de login con campos email/password\n- [ ] Implementar validaciones de formulario\n- [ ] Crear pantalla de registro con campos necesarios\n- [ ] Implementar pantalla de recuperación de contraseña\n- [ ] Añadir indicadores de loading y estados de error\n- [ ] Diseñar UI consistente con el theme de la app\n\n## Criterios de Aceptación\n- Pantallas de auth funcionales y atractivas\n- Validaciones completas en formularios\n- Manejo adecuado de estados de loading/error",
+          "labels": ["authentication", "ui", "forms"]
+        },
+        {
+          "title": "Integrar autenticación con Firebase",
+          "body": "## Descripción\nImplementar la lógica de autenticación conectada con Firebase Authentication.\n\n## Tareas\n- [ ] Implementar servicio de autenticación con email/password\n- [ ] Manejar estados de loading, errores y éxito\n- [ ] Implementar persistencia de sesión\n- [ ] Configurar auto-login para usuarios autenticados\n- [ ] Manejar logout y limpieza de sesión\n- [ ] Implementar validación de email\n\n## Criterios de Aceptación\n- Autenticación funcional con Firebase\n- Persistencia de sesión implementada\n- Manejo robusto de errores",
+          "labels": ["firebase", "authentication", "services"]
+        },
+        {
+          "title": "Implementar autenticación social",
+          "body": "## Descripción\nIntegrar autenticación con proveedores sociales para facilitar el acceso de usuarios.\n\n## Tareas\n- [ ] Integrar Sign in with Google\n- [ ] Integrar Sign in with Apple (para iOS)\n- [ ] Manejar flujos de error específicos de cada proveedor\n- [ ] Implementar flujo para usuarios nuevos vs existentes\n- [ ] Configurar permisos y certificados necesarios\n- [ ] Testing en dispositivos iOS y Android\n\n## Criterios de Aceptación\n- Autenticación social funcional en ambas plataformas\n- Manejo adecuado de casos edge\n- Experiencia de usuario fluida",
+          "labels": ["social-auth", "google", "apple", "cross-platform"]
+        }
+      ]
+    },
+    {
+      "title": "🏠 HITO 3: Pantalla Principal y Sistema de Tiradas",
+      "description": "Desarrollo de la pantalla principal con opciones de tiradas, implementación de la lógica completa de cartas del tarot (78 cartas con significados) y creación del flujo completo de tirada con animaciones.",
+      "due_date": null,
+      "issues": [
+        {
+          "title": "Crear diseño y estructura del Home",
+          "body": "## Descripción\nImplementar la pantalla principal con todas las opciones de tiradas disponibles y gestión de tokens.\n\n## Tareas\n- [ ] Diseñar interfaz principal atractiva\n- [ ] Implementar opciones de tiradas (3 cartas, cruz celta, etc.)\n- [ ] Crear widgets reutilizables para tipos de tirada\n- [ ] Implementar indicador de tokens disponibles\n- [ ] Añadir navegación a diferentes secciones\n- [ ] Implementar estado responsive para diferentes tamaños\n\n## Criterios de Aceptación\n- Pantalla principal funcional y atractiva\n- Navegación fluida entre opciones\n- Indicadores de tokens claros",
+          "labels": ["ui", "home", "navigation", "tokens"]
+        },
+        {
+          "title": "Implementar lógica de las cartas del tarot",
+          "body": "## Descripción\nCrear toda la lógica y datos necesarios para manejar las 78 cartas del tarot con sus significados.\n\n## Tareas\n- [ ] Crear modelos de datos para cartas del tarot\n- [ ] Implementar base de datos con las 78 cartas y significados\n- [ ] Crear algoritmo de barajado aleatorio\n- [ ] Implementar selección aleatoria de cartas\n- [ ] Crear widget para mostrar cartas individuales\n- [ ] Añadir animaciones de volteo de cartas\n- [ ] Implementar diferentes interpretaciones según posición\n\n## Criterios de Aceptación\n- 78 cartas completas con significados\n- Algoritmo de selección aleatoria robusto\n- Animaciones fluidas y atractivas",
+          "labels": ["tarot", "data", "algorithms", "animations"]
+        },
+        {
+          "title": "Desarrollar flujo de tirada completo",
+          "body": "## Descripción\nImplementar el flujo completo desde la selección de tirada hasta la interpretación de resultados.\n\n## Tareas\n- [ ] Crear pantalla de selección de tipo de tirada\n- [ ] Implementar pantalla de ejecución con animaciones\n- [ ] Crear pantalla de resultados con interpretación\n- [ ] Implementar diferentes layouts según tipo de tirada\n- [ ] Añadir funcionalidad de guardar tirada\n- [ ] Implementar validación de tokens antes de tirada\n- [ ] Crear transiciones suaves entre pantallas\n\n## Criterios de Aceptación\n- Flujo completo funcional y fluido\n- Múltiples tipos de tirada disponibles\n- Interpretaciones claras y útiles",
+          "labels": ["tirada", "workflow", "ui", "tokens"]
+        }
+      ]
+    },
+    {
+      "title": "💾 HITO 4: Sistema de Persistencia y Histórico",
+      "description": "Implementación de modelos de datos en Firestore, desarrollo de pantalla de histórico/diario de tiradas con filtros, y sistema completo de gestión de tokens con validaciones.",
+      "due_date": null,
+      "issues": [
+        {
+          "title": "Implementar modelos de datos en Firestore",
+          "body": "## Descripción\nCrear estructura completa de datos en Firestore para usuarios, tiradas y transacciones.\n\n## Tareas\n- [ ] Diseñar estructura de datos para usuarios\n- [ ] Crear modelos para tiradas y resultados\n- [ ] Implementar modelos para transacciones de tokens\n- [ ] Crear servicios CRUD para gestionar tiradas\n- [ ] Configurar índices optimizados en Firestore\n- [ ] Implementar consultas eficientes\n- [ ] Añadir validaciones de datos\n\n## Criterios de Aceptación\n- Estructura de datos bien definida\n- Operaciones CRUD funcionales\n- Consultas optimizadas y rápidas",
+          "labels": ["firestore", "data-models", "crud", "database"]
+        },
+        {
+          "title": "Desarrollar pantalla de diario/histórico",
+          "body": "## Descripción\nCrear interfaz completa para visualizar y gestionar el histórico de tiradas del usuario.\n\n## Tareas\n- [ ] Crear interfaz de lista de tiradas pasadas\n- [ ] Implementar filtros por fecha y tipo de tirada\n- [ ] Añadir funcionalidad de búsqueda\n- [ ] Crear pantalla de detalles de tirada anterior\n- [ ] Implementar paginación para listas largas\n- [ ] Añadir opciones de exportar/compartir tiradas\n- [ ] Implementar ordenamiento por diferentes criterios\n\n## Criterios de Aceptación\n- Histórico completo y navegable\n- Filtros y búsqueda funcionales\n- Experiencia de usuario intuitiva",
+          "labels": ["ui", "history", "filters", "search"]
+        },
+        {
+          "title": "Implementar sistema de tokens",
+          "body": "## Descripción\nCrear sistema completo de gestión de tokens para controlar el acceso a las tiradas.\n\n## Tareas\n- [ ] Crear lógica para descontar tokens por tirada\n- [ ] Implementar validaciones de tokens suficientes\n- [ ] Configurar tokens iniciales para nuevos usuarios\n- [ ] Crear sistema de seguimiento de uso de tokens\n- [ ] Implementar notificaciones de tokens bajos\n- [ ] Añadir diferentes costos según tipo de tirada\n- [ ] Crear logs de transacciones de tokens\n\n## Criterios de Aceptación\n- Sistema de tokens robusto y seguro\n- Validaciones correctas antes de tiradas\n- Tracking completo de uso",
+          "labels": ["tokens", "validation", "business-logic", "tracking"]
+        }
+      ]
+    },
+    {
+      "title": "👤 HITO 5: Perfil de Usuario y Monetización",
+      "description": "Creación de pantalla de perfil completa, implementación del sistema de compra de tokens con integración de pagos (Apple Pay/Google Pay/Stripe) y configuración de notificaciones push.",
+      "due_date": null,
+      "issues": [
+        {
+          "title": "Crear pantalla de perfil de usuario",
+          "body": "## Descripción\nImplementar pantalla completa de perfil con información del usuario y opciones de cuenta.\n\n## Tareas\n- [ ] Crear interfaz de perfil con información del usuario\n- [ ] Implementar edición de datos de perfil\n- [ ] Añadir funcionalidad de logout seguro\n- [ ] Implementar eliminación de cuenta\n- [ ] Mostrar estadísticas de uso (tiradas, tokens)\n- [ ] Crear sección de configuraciones personales\n- [ ] Añadir avatar personalizable\n\n## Criterios de Aceptación\n- Perfil completo y funcional\n- Estadísticas útiles y actualizadas\n- Opciones de cuenta seguras",
+          "labels": ["profile", "ui", "user-management", "statistics"]
+        },
+        {
+          "title": "Implementar sistema de compra de tokens",
+          "body": "## Descripción\nCrear sistema completo de monetización con integración de múltiples métodos de pago.\n\n## Tareas\n- [ ] Integrar Apple Pay para iOS\n- [ ] Integrar Google Pay para Android\n- [ ] Configurar Stripe para pagos con tarjeta\n- [ ] Crear pantalla de paquetes de tokens disponibles\n- [ ] Implementar flujo completo de compra\n- [ ] Añadir validación y confirmación de pagos\n- [ ] Implementar manejo de errores de pago\n- [ ] Crear sistema de receipts/comprobantes\n\n## Criterios de Aceptación\n- Múltiples métodos de pago funcionales\n- Flujo de compra seguro y confiable\n- Manejo robusto de errores",
+          "labels": ["payments", "monetization", "apple-pay", "google-pay", "stripe"]
+        },
+        {
+          "title": "Configurar notificaciones y configuraciones",
+          "body": "## Descripción\nImplementar sistema de notificaciones push y pantalla de configuraciones de la app.\n\n## Tareas\n- [ ] Configurar Firebase Cloud Messaging\n- [ ] Implementar notificaciones push básicas\n- [ ] Crear pantalla de configuraciones\n- [ ] Añadir opciones de tema (claro/oscuro)\n- [ ] Implementar configuración de notificaciones\n- [ ] Crear sección de soporte y contacto\n- [ ] Añadir enlaces a términos y privacidad\n- [ ] Implementar feedback y rating de la app\n\n## Criterios de Aceptación\n- Notificaciones push funcionales\n- Configuraciones completas y útiles\n- Canales de soporte disponibles",
+          "labels": ["notifications", "settings", "support", "fcm"]
+        }
+      ]
+    },
+    {
+      "title": "🚀 HITO 6: Testing, Optimización y Deploy",
+      "description": "Implementación completa de testing (unitarios e integración), optimización de rendimiento, configuración de analytics y crashlytics, y preparación para deploy en App Store y Google Play.",
+      "due_date": null,
+      "issues": [
+        {
+          "title": "Implementar testing y validaciones",
+          "body": "## Descripción\nCrear suite completa de tests para asegurar la calidad y estabilidad de la aplicación.\n\n## Tareas\n- [ ] Crear tests unitarios para servicios críticos\n- [ ] Implementar tests de integración para flujos principales\n- [ ] Añadir tests para autenticación y pagos\n- [ ] Crear tests para algoritmos de tiradas\n- [ ] Implementar tests de UI con widget testing\n- [ ] Realizar testing manual en dispositivos iOS y Android\n- [ ] Configurar CI/CD con testing automatizado\n\n## Criterios de Aceptación\n- Cobertura de tests > 80% en código crítico\n- Todos los flujos principales testeados\n- CI/CD configurado y funcional",
+          "labels": ["testing", "quality", "ci-cd", "automation"]
+        },
+        {
+          "title": "Optimización y preparación para producción",
+          "body": "## Descripción\nOptimizar la aplicación para producción y configurar herramientas de monitoreo.\n\n## Tareas\n- [ ] Optimizar rendimiento y tiempos de carga\n- [ ] Implementar lazy loading donde sea necesario\n- [ ] Configurar Firebase Analytics\n- [ ] Implementar Firebase Crashlytics\n- [ ] Configurar logging estructurado\n- [ ] Optimizar tamaño de la aplicación\n- [ ] Realizar auditoría de seguridad\n- [ ] Configurar obfuscación de código\n\n## Criterios de Aceptación\n- App optimizada para producción\n- Analytics y crashlytics configurados\n- Rendimiento mejorado significativamente",
+          "labels": ["optimization", "analytics", "crashlytics", "performance"]
+        },
+        {
+          "title": "Deploy y configuración de stores",
+          "body": "## Descripción\nPreparar y realizar el deploy de la aplicación en App Store y Google Play Store.\n\n## Tareas\n- [ ] Preparar assets y metadata para App Store\n- [ ] Preparar assets y metadata para Google Play\n- [ ] Configurar certificados de firma iOS\n- [ ] Configurar signing key Android\n- [ ] Crear screenshots y descripciones de stores\n- [ ] Realizar deploy de testing (TestFlight/Internal Testing)\n- [ ] Realizar deploy final a producción\n- [ ] Configurar ASO (App Store Optimization)\n\n## Criterios de Aceptación\n- App disponible en ambas stores\n- Metadata y assets optimizados\n- Proceso de deploy documentado",
+          "labels": ["deploy", "app-store", "google-play", "aso", "release"]
+        }
+      ]
+    }
+  ],
+  "options": {
+    "auto_assign_issues": true,
+    "dry_run_first": true
+  }
+}
