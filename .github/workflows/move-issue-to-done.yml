@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Extract issue number from branch name
         id: extract-issue
         run: |
@@ -56,11 +59,9 @@ jobs:
       - name: Get project information
         id: get-project
         if: steps.check-issue.outputs.issue_exists == 'true'
-        run: |
-          echo "DEBUG: Buscando proyectos para owner: ${{ github.repository_owner }}"
-          
-          # Obtener información del proyecto del usuario/organización
-          project_data=$(gh api graphql -f query='
+        uses: octokit/graphql-action@v2.x
+        with:
+          query: |
             query($owner: String!) {
               user(login: $owner) {
                 projectsV2(first: 20) {
@@ -72,43 +73,39 @@ jobs:
                 }
               }
             }
-          ' -f owner="${{ github.repository_owner }}")
+          owner: ${{ github.repository_owner }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
+      - name: Process project data
+        id: process-project
+        if: steps.check-issue.outputs.issue_exists == 'true'
+        run: |
+          echo "DEBUG: Buscando proyectos para owner: ${{ github.repository_owner }}"
           echo "DEBUG: Respuesta completa de GraphQL:"
-          echo "$project_data"
-          
-          # Verificar si hay errores en la respuesta
-          if echo "$project_data" | jq -e '.errors' > /dev/null; then
-            echo "ERROR: GraphQL devolvió errores:"
-            echo "$project_data" | jq '.errors'
-            echo "project_found=false" >> $GITHUB_OUTPUT
-            exit 1
-          fi
+          echo '${{ steps.get-project.outputs.data }}'
           
           # Buscar el proyecto específico por título
-          project_id=$(echo "$project_data" | jq -r '.data.user.projectsV2.nodes[] | select(.title | test("AutomatedPlannerSaaS"; "i")) | .id')
+          project_id=$(echo '${{ steps.get-project.outputs.data }}' | jq -r '.user.projectsV2.nodes[] | select(.title | test("AutomatedPlannerSaaS"; "i")) | .id')
           
-          echo "DEBUG: project_id encontrado: '$project_id'"
-          
-          if [ -z "$project_id" ]; then
-            echo "No se encontró proyecto 'AutomatedPlannerSaaS - Project Management'"
+          if [ -z "$project_id" ] || [ "$project_id" = "null" ]; then
+            echo "No se encontró el proyecto 'AutomatedPlannerSaaS'"
             echo "Proyectos disponibles:"
-            echo "$project_data" | jq -r '.data.user.projectsV2.nodes[] | .title'
+            echo '${{ steps.get-project.outputs.data }}' | jq -r '.user.projectsV2.nodes[] | "- \(.title) (ID: \(.id))"'
             echo "project_found=false" >> $GITHUB_OUTPUT
           else
             echo "Proyecto encontrado: $project_id"
+            echo "DEBUG: project_id encontrado: $project_id"
             echo "project_id=$project_id" >> $GITHUB_OUTPUT
             echo "project_found=true" >> $GITHUB_OUTPUT
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get issue project item
         id: get-issue-item
-        if: steps.get-project.outputs.project_found == 'true'
+        if: steps.process-project.outputs.project_found == 'true'
         run: |
           issue_number="${{ steps.extract-issue.outputs.issue_number }}"
-          project_id="${{ steps.get-project.outputs.project_id }}"
+          project_id="${{ steps.process-project.outputs.project_id }}"
           
           # Obtener el ID del item de la issue en el proyecto
           issue_data=$(gh api graphql -f query='
