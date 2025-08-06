@@ -1,0 +1,36 @@
+{
+  "repository": {
+    "owner": "Toni-Cancela",
+    "name": "FinanZen"
+  },
+  "project": {
+    "title": "FinanZen - Project Management",
+    "description": "Gestión integral del proyecto FinanZen con tracking de milestones, issues y progreso de desarrollo de la aplicación de finanzas personales."
+  },
+  "milestones": [
+    {
+      "title": "🏗️ Setup/Inicialización",
+      "description": "Configuración inicial del proyecto, estructura de directorios con Clean Architecture, instalación de dependencias principales (freezed, dartz, dio, bloc) y configuración completa del entorno de testing.",
+      "due_date": null
+    },
+    {
+      "title": "🚀 MVP Implementation", 
+      "description": "Implementación del producto mínimo viable incluyendo: diseño de UI, modelado de datos, integración con Firebase, sistema de autenticación con Google Sign-In, gestión de transacciones y cálculo de margen de ahorro.",
+      "due_date": null
+    },
+    {
+      "title": "⚡ Optimización Financiera",
+      "description": "Funcionalidades avanzadas de optimización: calculadora de eliminación de gastos recurrentes, sistema de estrategias inteligentes e integración con IA para análisis financiero personalizado.",
+      "due_date": null
+    },
+    {
+      "title": "📊 Gráficas e Info Visual",
+      "description": "Implementación completa de visualizaciones: instalación de librerías de gráficas, creación de pantallas de análisis visual y sistema avanzado de filtros para personalizar la información.",
+      "due_date": null
+    }
+  ],
+  "options": {
+    "auto_assign_issues": true,
+    "dry_run_first": true
+  }
+}

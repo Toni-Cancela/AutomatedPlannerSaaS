@@ -1,28 +1,85 @@
-# AutomatedPlannerSaaS
+# Automated Planner SaaS
 
-A SaaS platform for automated project planning and GitHub project management with AI-powered task splitting and milestone creation.
+A modern React + TypeScript application for automated planning and task management.
 
-## Overview
+## 🚀 Tech Stack
 
-This platform transforms project descriptions into structured GitHub projects with automated milestone and task creation, leveraging AI to intelligently split complex projects into manageable components.
+- **React 18** - Modern React with hooks
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Fast build tool and dev server
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
 
-## Tech Stack
+## 📁 Project Structure
 
-- **Frontend**: React + TypeScript + Tailwind CSS + Shadcn UI
-- **Backend**: Supabase (Database + Edge Functions)
-- **Deployment**: Vercel
-- **Authentication**: Social login (Google, GitHub) + Email/Password
-- **Payments**: Stripe integration
+```
+src/
+├── components/     # Reusable UI components
+├── pages/         # Page components
+├── hooks/         # Custom React hooks
+├── utils/         # Utility functions
+├── types/         # TypeScript type definitions
+├── services/      # API services and external integrations
+└── assets/        # Static assets (images, icons, etc.)
+```
 
-## Features
+## 🛠️ Development
 
-- AI-powered project planning and task splitting
-- GitHub integration for automated project setup
-- User dashboard with project management
-- Social authentication
-- Subscription management
-- User feedback collection
+### Prerequisites
 
-## Development
+- Node.js (v18 or higher)
+- npm or yarn
 
-This project is currently in development. More documentation will be added as the project progresses.
+### Getting Started
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint issues
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check code formatting
+
+## 🎯 Path Aliases
+
+The project uses path aliases for cleaner imports:
+
+- `@/` → `src/`
+- `@/components` → `src/components`
+- `@/pages` → `src/pages`
+- `@/hooks` → `src/hooks`
+- `@/utils` → `src/utils`
+- `@/types` → `src/types`
+- `@/services` → `src/services`
+- `@/assets` → `src/assets`
+
+## 📝 Code Style
+
+- ESLint configuration for React + TypeScript
+- Prettier for consistent code formatting
+- Strict TypeScript configuration
+- Angular-style commit messages
+
+## 🚀 Deployment
+
+Build the project for production:
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist/` directory.
