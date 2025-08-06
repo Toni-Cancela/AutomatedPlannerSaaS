@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components'
 import { CheckCircle, Zap, Calendar, Users } from 'lucide-react'
+import { SupabaseTest } from '@/components/SupabaseTest'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -31,6 +32,11 @@ function App() {
               +
             </Button>
           </div>
+        </div>
+
+        {/* Supabase Connection Test */}
+        <div className="mb-12">
+          <SupabaseTest />
         </div>
 
         {/* Feature Cards */}
