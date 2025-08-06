@@ -1,0 +1,261 @@
+name: Move Issue to Done on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [develop]
+
+permissions:
+  issues: write
+  pull-requests: read
+  contents: read
+
+jobs:
+  move-issue-to-done:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Extract issue number from branch name
+        id: extract-issue
+        run: |
+          branch_name="${{ github.event.pull_request.head.ref }}"
+          # Extraer el número al final de la rama (formato: nombre-rama-123)
+          issue_number=$(echo "$branch_name" | grep -o '[0-9]\+$')
+          
+          if [ -z "$issue_number" ]; then
+            echo "No se encontró número de issue en la rama: $branch_name"
+            echo "issue_found=false" >> $GITHUB_OUTPUT
+          else
+            echo "Número de issue encontrado: $issue_number"
+            echo "issue_number=$issue_number" >> $GITHUB_OUTPUT
+            echo "issue_found=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check if issue exists
+        id: check-issue
+        if: steps.extract-issue.outputs.issue_found == 'true'
+        run: |
+          issue_number="${{ steps.extract-issue.outputs.issue_number }}"
+          
+          # Verificar si la issue existe
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$issue_number")
+          
+          if [ "$response" = "200" ]; then
+            echo "Issue #$issue_number existe"
+            echo "issue_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Issue #$issue_number no existe (código: $response)"
+            echo "issue_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get project information
+        id: get-project
+        if: steps.check-issue.outputs.issue_exists == 'true'
+        run: |
+          # Obtener información del proyecto asociado al repositorio
+          project_data=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) {
+                projectsV2(first: 10) {
+                  nodes {
+                    id
+                    title
+                    number
+                  }
+                }
+              }
+            }
+          ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}")
+          
+          project_id=$(echo "$project_data" | jq -r '.data.repository.projectsV2.nodes[0].id // empty')
+          
+          if [ -z "$project_id" ]; then
+            echo "No se encontró proyecto asociado al repositorio"
+            echo "project_found=false" >> $GITHUB_OUTPUT
+          else
+            echo "Proyecto encontrado: $project_id"
+            echo "project_id=$project_id" >> $GITHUB_OUTPUT
+            echo "project_found=true" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get issue project item
+        id: get-issue-item
+        if: steps.get-project.outputs.project_found == 'true'
+        run: |
+          issue_number="${{ steps.extract-issue.outputs.issue_number }}"
+          project_id="${{ steps.get-project.outputs.project_id }}"
+          
+          # Obtener el ID del item de la issue en el proyecto
+          issue_data=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $issueNumber: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $issueNumber) {
+                  id
+                  projectItems(first: 10) {
+                    nodes {
+                      id
+                      project {
+                        id
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" -F issueNumber="$issue_number")
+          
+          # Buscar el item de la issue en el proyecto específico
+          project_item_id=$(echo "$issue_data" | jq -r --arg projectId "$project_id" '.data.repository.issue.projectItems.nodes[] | select(.project.id == $projectId) | .id')
+          
+          if [ -z "$project_item_id" ]; then
+            echo "Issue #$issue_number no está asociada al proyecto"
+            echo "item_found=false" >> $GITHUB_OUTPUT
+          else
+            echo "Item encontrado: $project_item_id"
+            echo "project_item_id=$project_item_id" >> $GITHUB_OUTPUT
+            echo "item_found=true" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get project fields and move to Done
+        id: move-to-done
+        if: steps.get-issue-item.outputs.item_found == 'true'
+        run: |
+          project_id="${{ steps.get-project.outputs.project_id }}"
+          project_item_id="${{ steps.get-issue-item.outputs.project_item_id }}"
+          issue_number="${{ steps.extract-issue.outputs.issue_number }}"
+          
+          # Obtener los campos del proyecto
+          fields_data=$(gh api graphql -f query='
+            query($projectId: ID!) {
+              node(id: $projectId) {
+                ... on ProjectV2 {
+                  fields(first: 20) {
+                    nodes {
+                      ... on ProjectV2SingleSelectField {
+                        id
+                        name
+                        options {
+                          id
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' -f projectId="$project_id")
+          
+          # Buscar el campo de estado
+          status_field_id=$(echo "$fields_data" | jq -r '.data.node.fields.nodes[] | select(.name | test("Status|Estado"; "i")) | .id')
+          
+          if [ -z "$status_field_id" ]; then
+            echo "No se encontró campo de estado en el proyecto"
+            exit 0
+          fi
+          
+          # Buscar la opción "Done"
+          done_option_id=$(echo "$fields_data" | jq -r --arg fieldId "$status_field_id" '.data.node.fields.nodes[] | select(.id == $fieldId) | .options[] | select(.name | test("Done|Terminado|Completado|Hecho"; "i")) | .id')
+          
+          if [ -z "$done_option_id" ]; then
+            echo "No se encontró opción 'Done' en el campo de estado"
+            # Mostrar las opciones disponibles para debug
+            echo "Opciones disponibles:"
+            echo "$fields_data" | jq -r --arg fieldId "$status_field_id" '.data.node.fields.nodes[] | select(.id == $fieldId) | .options[] | .name'
+            exit 0
+          fi
+          
+          # Verificar el estado actual de la issue
+          current_item_data=$(gh api graphql -f query='
+            query($projectId: ID!, $itemId: ID!) {
+              node(id: $projectId) {
+                ... on ProjectV2 {
+                  item(id: $itemId) {
+                    fieldValues(first: 10) {
+                      nodes {
+                        ... on ProjectV2ItemFieldSingleSelectValue {
+                          field {
+                            ... on ProjectV2SingleSelectField {
+                              name
+                            }
+                          }
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ' -f projectId="$project_id" -f itemId="$project_item_id")
+          
+          current_status=$(echo "$current_item_data" | jq -r '.data.node.item.fieldValues.nodes[] | select(.field.name | test("Status|Estado"; "i")) | .name // "unknown"')
+          
+          echo "Estado actual de la issue: $current_status"
+          
+          # Solo mover si está en "In Review" o similar
+          if echo "$current_status" | grep -qi "review\|revisión"; then
+            echo "Moviendo issue #$issue_number de '$current_status' a 'Done'..."
+            
+            # Actualizar el estado a "Done"
+            gh api graphql -f query='
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId
+                  itemId: $itemId
+                  fieldId: $fieldId
+                  value: {singleSelectOptionId: $optionId}
+                }) {
+                  projectV2Item {
+                    id
+                  }
+                }
+              }
+            ' -f projectId="$project_id" -f itemId="$project_item_id" -f fieldId="$status_field_id" -f optionId="$done_option_id"
+            
+            echo "✅ Issue #$issue_number movida a 'Done' exitosamente"
+            echo "status_updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Issue #$issue_number no está en estado 'In Review'. Estado actual: $current_status"
+            echo "No se moverá automáticamente."
+            echo "status_updated=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add comment to issue
+        if: steps.move-to-done.outputs.status_updated == 'true'
+        run: |
+          issue_number="${{ steps.extract-issue.outputs.issue_number }}"
+          pr_number="${{ github.event.pull_request.number }}"
+          
+          gh issue comment "$issue_number" --body "🎉 Esta issue ha sido resuelta y automáticamente movida a **Done** tras el merge del PR #$pr_number a la rama \`develop\`."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## 📋 Resumen del procesamiento automático" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Rama mergeada:** \`${{ github.event.pull_request.head.ref }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**PR:** #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.extract-issue.outputs.issue_found }}" = "true" ]; then
+            echo "**Issue detectada:** #${{ steps.extract-issue.outputs.issue_number }}" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "${{ steps.move-to-done.outputs.status_updated }}" = "true" ]; then
+              echo "**Estado:** ✅ Movida a Done exitosamente" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "**Estado:** ⚠️ No se movió (no estaba en In Review)" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "**Issue:** ❌ No se detectó número de issue en la rama" >> $GITHUB_STEP_SUMMARY
+          fi
