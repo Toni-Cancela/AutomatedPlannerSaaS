@@ -56,11 +56,11 @@ jobs:
         id: get-project
         if: steps.check-issue.outputs.issue_exists == 'true'
         run: |
-          # Obtener información del proyecto asociado al repositorio
+          # Obtener información del proyecto del usuario/organización
           project_data=$(gh api graphql -f query='
-            query($owner: String!, $repo: String!) {
-              repository(owner: $owner, name: $repo) {
-                projectsV2(first: 10) {
+            query($owner: String!) {
+              user(login: $owner) {
+                projectsV2(first: 20) {
                   nodes {
                     id
                     title
@@ -69,12 +69,15 @@ jobs:
                 }
               }
             }
-          ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}")
+          ' -f owner="${{ github.repository_owner }}")
           
-          project_id=$(echo "$project_data" | jq -r '.data.repository.projectsV2.nodes[0].id // empty')
+          # Buscar el proyecto específico por título
+          project_id=$(echo "$project_data" | jq -r '.data.user.projectsV2.nodes[] | select(.title | test("AutomatedPlannerSaaS"; "i")) | .id')
           
           if [ -z "$project_id" ]; then
-            echo "No se encontró proyecto asociado al repositorio"
+            echo "No se encontró proyecto 'AutomatedPlannerSaaS - Project Management'"
+            echo "Proyectos disponibles:"
+            echo "$project_data" | jq -r '.data.user.projectsV2.nodes[] | .title'
             echo "project_found=false" >> $GITHUB_OUTPUT
           else
             echo "Proyecto encontrado: $project_id"
@@ -199,10 +202,11 @@ jobs:
           
           current_status=$(echo "$current_item_data" | jq -r '.data.node.item.fieldValues.nodes[] | select(.field.name | test("Status|Estado"; "i")) | .name // "unknown"')
           
-          echo "Estado actual de la issue: $current_status"
+          echo "Estado actual de la issue: '$current_status'"
+          echo "Verificando si está en 'In Review'..."
           
-          # Solo mover si está en "In Review" o similar
-          if echo "$current_status" | grep -qi "review\|revisión"; then
+          # Solo mover si está exactamente en "In Review"
+          if [ "$current_status" = "In Review" ]; then
             echo "Moviendo issue #$issue_number de '$current_status' a 'Done'..."
             
             # Actualizar el estado a "Done"
@@ -224,7 +228,8 @@ jobs:
             echo "✅ Issue #$issue_number movida a 'Done' exitosamente"
             echo "status_updated=true" >> $GITHUB_OUTPUT
           else
-            echo "⚠️ Issue #$issue_number no está en estado 'In Review'. Estado actual: $current_status"
+            echo "⚠️ Issue #$issue_number no está en estado 'In Review'. Estado actual: '$current_status'"
+            echo "Estados válidos para mover a Done: 'In Review'"
             echo "No se moverá automáticamente."
             echo "status_updated=false" >> $GITHUB_OUTPUT
           fi
