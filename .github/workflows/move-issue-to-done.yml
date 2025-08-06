@@ -6,9 +6,10 @@ on:
     branches: [develop]
 
 permissions:
+  contents: read
   issues: write
   pull-requests: read
-  contents: read
+  repository-projects: read
 
 jobs:
   move-issue-to-done:
@@ -56,6 +57,8 @@ jobs:
         id: get-project
         if: steps.check-issue.outputs.issue_exists == 'true'
         run: |
+          echo "DEBUG: Buscando proyectos para owner: ${{ github.repository_owner }}"
+          
           # Obtener información del proyecto del usuario/organización
           project_data=$(gh api graphql -f query='
             query($owner: String!) {
@@ -71,8 +74,21 @@ jobs:
             }
           ' -f owner="${{ github.repository_owner }}")
           
+          echo "DEBUG: Respuesta completa de GraphQL:"
+          echo "$project_data"
+          
+          # Verificar si hay errores en la respuesta
+          if echo "$project_data" | jq -e '.errors' > /dev/null; then
+            echo "ERROR: GraphQL devolvió errores:"
+            echo "$project_data" | jq '.errors'
+            echo "project_found=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
           # Buscar el proyecto específico por título
           project_id=$(echo "$project_data" | jq -r '.data.user.projectsV2.nodes[] | select(.title | test("AutomatedPlannerSaaS"; "i")) | .id')
+          
+          echo "DEBUG: project_id encontrado: '$project_id'"
           
           if [ -z "$project_id" ]; then
             echo "No se encontró proyecto 'AutomatedPlannerSaaS - Project Management'"
