@@ -1,7 +1,38 @@
+@import url('https://fonts.cdnfonts.com/css/satoshi');
 @import 'tailwindcss';
 
 @layer base {
   :root {
+    /* Variables de tema personalizadas - Midnight Theme */
+    --theme-primary: #115462;
+    --theme-primary-light: #11546280;
+    --theme-primary-dark: #0a3d47;
+    --theme-secondary: #FFB000;
+    --theme-accent: #FFB000;
+    --theme-background: #0090A0;
+    --theme-surface: #83CFE1;
+    --theme-text: #ffffff;
+    --theme-text-secondary: #83CFE1;
+    --theme-border: #115462;
+    --theme-border-primary: #0a3d47;
+    --theme-success: #10b981;
+    --theme-warning: #f59e0b;
+    --theme-error: #ab0000;
+    --theme-base-white: #FFFFFF;
+    --theme-base-gray-100: #0090A0;
+    --theme-base-gray-200: #83CFE1;
+    --theme-base-gray-300: #115462;
+    --theme-base-gray-400: #0a3d47;
+    --theme-base-gray-500: #083238;
+    --theme-base-gray-600: #062529;
+    --theme-base-gray-700: #04181b;
+    --theme-base-gray-800: #020c0e;
+    --theme-base-gray-900: #000000;
+    --theme-gradient-from: #115462;
+    --theme-gradient-via: #0a3d47;
+    --theme-gradient-to: #083238;
+    
+    /* Variables de shadcn/ui actualizadas para usar tema */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -45,6 +76,8 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 94.1%;
   }
+
+
 }
 
 @layer base {
@@ -54,5 +87,111 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-family: 'Satoshi', sans-serif;
+  }
+}
+
+/* Clases utilitarias para el tema */
+@layer utilities {
+  .theme-primary {
+    color: var(--theme-primary);
+  }
+  .theme-primary-bg {
+    background-color: var(--theme-primary);
+  }
+  .theme-primary-light {
+    color: var(--theme-primary-light);
+  }
+  .theme-primary-light-bg {
+    background-color: var(--theme-primary-light);
+  }
+  .theme-primary-dark {
+    color: var(--theme-primary-dark);
+  }
+  .theme-primary-dark-bg {
+    background-color: var(--theme-primary-dark);
+  }
+  .theme-accent {
+    color: var(--theme-accent);
+  }
+  .theme-accent-bg {
+    background-color: var(--theme-accent);
+  }
+  .theme-secondary {
+    color: var(--theme-secondary);
+  }
+  .theme-secondary-bg {
+    background-color: var(--theme-secondary);
+  }
+  .theme-gradient {
+    background: linear-gradient(135deg, var(--theme-gradient-from), var(--theme-gradient-via), var(--theme-gradient-to));
+  }
+  .theme-border-primary {
+    border-color: var(--theme-primary);
+  }
+  .theme-border-accent {
+    border-color: var(--theme-accent);
+  }
+  
+  /* Background and text classes */
+  .theme-bg {
+    background-color: var(--theme-background);
+  }
+  .theme-surface-bg {
+    background-color: var(--theme-surface);
+  }
+  .theme-text {
+    color: var(--theme-text);
+  }
+  .theme-text-secondary {
+    color: var(--theme-text-secondary);
+  }
+  
+  /* Border classes */
+  .theme-border {
+    border-color: var(--theme-border);
+  }
+  .theme-border-primary {
+    border-color: var(--theme-border-primary);
+  }
+  .theme-border-accent {
+    border-color: var(--theme-accent);
+  }
+  
+  /* Status colors */
+  .theme-success {
+    color: var(--theme-success);
+  }
+  .theme-success-bg {
+    background-color: var(--theme-success);
+  }
+  .theme-warning {
+    color: var(--theme-warning);
+  }
+  .theme-warning-bg {
+    background-color: var(--theme-warning);
+  }
+  .theme-error {
+    color: var(--theme-error);
+  }
+  .theme-error-bg {
+    background-color: var(--theme-error);
+  }
+  
+  /* Hover states */
+  .hover\:theme-primary-dark-bg:hover {
+    background-color: var(--theme-primary-dark);
+  }
+  .hover\:theme-primary-dark:hover {
+    color: var(--theme-primary-dark);
+  }
+  .hover\:theme-secondary:hover {
+    color: var(--theme-secondary);
+  }
+  .hover\:theme-text:hover {
+    color: var(--theme-text);
+  }
+  .hover\:theme-base-gray-100:hover {
+    background-color: var(--theme-base-gray-100);
   }
 }
