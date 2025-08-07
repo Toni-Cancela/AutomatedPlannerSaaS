@@ -1,18 +1,19 @@
 import React from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 
 export const SocialLogin: React.FC = () => {
   const { signInWithGoogle } = useAuth()
+  const { showToast } = useToast()
 
   const handleGoogleSignIn = async () => {
     try {
       const { error } = await signInWithGoogle()
       if (error) {
-        console.error('Error signing in with Google:', error.message)
-        // You can add toast notification here if needed
+        showToast('Error signing in with Google. Please try again.', 'error')
       }
     } catch (error) {
-      console.error('Unexpected error:', error)
+      showToast('An unexpected error occurred. Please try again.', 'error')
     }
   }
 
