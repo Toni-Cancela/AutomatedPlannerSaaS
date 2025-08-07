@@ -1,6 +1,22 @@
 import React from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 
 export const SocialLogin: React.FC = () => {
+  const { signInWithGoogle } = useAuth()
+  const { showToast } = useToast()
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const { error } = await signInWithGoogle()
+      if (error) {
+        showToast('Error signing in with Google. Please try again.', 'error')
+      }
+    } catch (error) {
+      showToast('An unexpected error occurred. Please try again.', 'error')
+    }
+  }
+
   return (
     <>
       {/* OR Divider */}
@@ -17,6 +33,7 @@ export const SocialLogin: React.FC = () => {
       <div className="flex space-x-4">
         <button
           type="button"
+          onClick={handleGoogleSignIn}
           className="flex-1 h-12 border theme-border-primary theme-primary-bg rounded-lg flex items-center justify-center hover:theme-primary-dark-bg transition-colors"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
