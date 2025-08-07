@@ -9,6 +9,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signInWithGoogle: () => Promise<{ error: any }>
+  signInWithGitHub: () => Promise<{ error: any }>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<{ error: any }>
 }
@@ -87,6 +88,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return { error }
   }
 
+  const signInWithGitHub = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`
+      }
+    })
+    return { error }
+  }
+
   const value = {
     user,
     session,
@@ -94,6 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signUp,
     signIn,
     signInWithGoogle,
+    signInWithGitHub,
     signOut,
     resetPassword,
   }
